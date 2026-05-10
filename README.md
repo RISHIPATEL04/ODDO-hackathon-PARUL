@@ -2,6 +2,7 @@
 deployed web link (prefered to open in computer/laptop) : https://oddo-hackathon-parul-s9aa.vercel.app/
 
 if you want to visit or test the website and you are uncomfortable for entring your own Gmail use this cedentials:
+
 email : test@gmail.com
 password : 1234
 
