@@ -7,6 +7,11 @@ export const metadata = {
   description: "Personalized, intelligent, and collaborative platform that transforms the way individuals plan and experience travel.",
 };
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export default function RootLayout({ children }) {
   return (
     <html lang="en">

@@ -486,3 +486,43 @@ input::placeholder, textarea::placeholder { color: var(--text-muted); }
   border-radius: var(--radius-md);
 }
 @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+
+/* ======================== MOBILE GLOBAL ======================== */
+@media (max-width: 768px) {
+  /* Navbar: hide text labels, keep icons on mobile */
+  .navbar { padding: 0 1rem; height: 56px; }
+  .navbar-links { gap: 0; }
+  .nav-link { padding: 0.4rem 0.5rem; font-size: 0; gap: 0; }
+  .nav-link svg { display: block; width: 20px; height: 20px; }
+  .nav-link.active { background: var(--primary-light); }
+  .nav-actions { gap: 0.4rem; }
+  .nav-actions .btn-sm { padding: 0.4rem 0.75rem; font-size: 0.78rem; }
+
+  /* Grid helpers collapse to single column */
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+
+  /* Reduce page padding */
+  .glass-panel { padding: 1rem !important; }
+}
+
+@media (max-width: 480px) {
+  /* Extra small: hide "New Trip" button text in navbar */
+  .navbar .btn-sm span { display: none; }
+  /* Keep avatar and logout visible */
+  .nav-avatar { width: 32px; height: 32px; font-size: 0.7rem; }
+
+  /* Booking flow pages */
+  .flights-page, .hotels-page, .billing-page {
+    padding: 1rem !important;
+    max-width: 100% !important;
+  }
+
+  /* Stack billing grid */
+  .billing-page .grid-2 { grid-template-columns: 1fr; }
+
+  /* Hotel cards full width */
+  .hotels-page .grid-2 { grid-template-columns: 1fr; }
+
+  /* Flex-between → wrap on tiny screens */
+  .flex-between { flex-wrap: wrap; gap: 0.5rem; }
+}
