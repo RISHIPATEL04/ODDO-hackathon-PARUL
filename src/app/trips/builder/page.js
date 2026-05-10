@@ -1,13 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Plus, MapPin, Calendar, Clock, Trash2, Save, GripVertical, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
 import "./builder.css";
 
 const ACTIVITY_TYPES = ['Sightseeing', 'Food', 'Adventure', 'Culture', 'Shopping', 'Transport', 'Other'];
 
-export default function ItineraryBuilder() {
+// Separate inner component so useSearchParams can be inside Suspense
+function BuilderContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const tripId = searchParams.get('id');
@@ -243,3 +244,11 @@ export default function ItineraryBuilder() {
   );
 }
 
+// Wrap in Suspense so useSearchParams works in production build
+export default function ItineraryBuilder() {
+  return (
+    <Suspense fallback={<div style={{ padding: '2rem', textAlign: 'center' }}>Loading builder...</div>}>
+      <BuilderContent />
+    </Suspense>
+  );
+}
