@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/app/api/auth/[...nextauth]/route';
-import connectMongo from '@/lib/mongodb';
-import CommunityPost from '@/models/CommunityPost';
+import connectMongo from '@/db-setup/mongodb';
+import CommunityPost from '@/database-models/CommunityPost';
 
 // POST /api/community/:id/comment — add comment
 export async function POST(request, { params }) {

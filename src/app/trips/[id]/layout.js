@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import connectMongo from "@/lib/mongodb";
-import Trip from "@/models/Trip";
+import connectMongo from "@/db-setup/mongodb";
+import Trip from "@/database-models/Trip";
 import { Navigation, DollarSign, CheckSquare, Calendar, MapPin, Users, ArrowLeft, Edit2 } from "lucide-react";
 import "./view.css";
 

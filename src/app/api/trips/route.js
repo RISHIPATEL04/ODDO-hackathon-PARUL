@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import connectMongo from '@/lib/mongodb';
-import Trip from '@/models/Trip';
+import connectMongo from '@/db-setup/mongodb';
+import Trip from '@/database-models/Trip';
 
 export async function GET(request) {
   try {
@@ -40,3 +40,4 @@ export async function POST(request) {
     return NextResponse.json({ success: false, error: error.message }, { status: 400 });
   }
 }
+

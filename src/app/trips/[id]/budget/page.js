@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import connectMongo from "@/lib/mongodb";
-import Trip from "@/models/Trip";
+import connectMongo from "@/db-setup/mongodb";
+import Trip from "@/database-models/Trip";
 
 const CATEGORY_META = {
   Transport: { color: '#2563EB', bg: '#EFF6FF', emoji: '✈️' },
@@ -21,27 +21,33 @@ export default async function BudgetPage({ params }) {
   const trip = await Trip.findOne({ _id: id, userId: session.user.id });
   if (!trip) return null;
 
+  const budget = trip.budget || 5000;
+  const flightCost = trip.flightCost || 0;
+  const hotelCost = trip.hotelCost || 0;
   const expenses = trip.expenses || [];
-  let breakdown = { Transport: 800, Stay: 1000, Meals: 400, Activities: 300 };
-
+  
+  let breakdown = { Transport: flightCost, Stay: hotelCost };
+  
+  // Add other manual expenses if any
   if (expenses.length > 0) {
-    breakdown = expenses.reduce((acc, curr) => {
-      acc[curr.category] = (acc[curr.category] || 0) + curr.estimatedCost;
-      return acc;
-    }, {});
+    expenses.forEach(curr => {
+      // Don't double count if category is Transport or Stay unless we want to
+      breakdown[curr.category] = (breakdown[curr.category] || 0) + curr.estimatedCost;
+    });
   }
 
-  const total = Object.values(breakdown).reduce((s, v) => s + v, 0);
-  const entries = Object.entries(breakdown).sort((a, b) => b[1] - a[1]);
+  const totalSpent = Object.values(breakdown).reduce((s, v) => s + v, 0);
+  const remaining = Math.max(0, budget - totalSpent);
+  const entries = Object.entries(breakdown).filter(([_, amt]) => amt > 0).sort((a, b) => b[1] - a[1]);
 
   return (
     <div className="budget-page animate-slide-up">
       {/* Hero Total */}
-      <div className="budget-hero">
-        <p className="budget-hero-label">Total Estimated Budget</p>
-        <p className="budget-hero-amount">${total.toLocaleString()}</p>
+      <div className="budget-hero" style={{ background: totalSpent > budget ? 'var(--error)' : 'var(--primary)' }}>
+        <p className="budget-hero-label">Total Spent / Budget</p>
+        <p className="budget-hero-amount">₹{totalSpent.toLocaleString()} / ₹{budget.toLocaleString()}</p>
         <p style={{ opacity: 0.7, fontSize: '0.875rem', marginTop: '0.5rem' }}>
-          Across {entries.length} spending categories
+          ₹{remaining.toLocaleString()} remaining
         </p>
       </div>
 
@@ -51,7 +57,7 @@ export default async function BudgetPage({ params }) {
         <div className="budget-grid">
           {entries.map(([category, amount]) => {
             const meta = CATEGORY_META[category] || CATEGORY_META.Other;
-            const pct = Math.round((amount / total) * 100);
+            const pct = Math.round((amount / budget) * 100);
             return (
               <div key={category} className="budget-cat-card">
                 <div className="budget-cat-name" style={{ color: meta.color }}>
@@ -59,11 +65,11 @@ export default async function BudgetPage({ params }) {
                     {meta.emoji} {category}
                   </span>
                 </div>
-                <div className="budget-cat-amount" style={{ color: meta.color }}>${amount}</div>
+                <div className="budget-cat-amount" style={{ color: meta.color }}>₹{amount.toLocaleString()}</div>
                 <div className="budget-cat-bar">
                   <div
                     className="budget-cat-fill"
-                    style={{ width: `${pct}%`, background: meta.color }}
+                    style={{ width: `${Math.min(100, pct)}%`, background: meta.color }}
                   />
                 </div>
                 <p className="text-xs text-muted mt-2">{pct}% of total budget</p>
@@ -74,12 +80,12 @@ export default async function BudgetPage({ params }) {
       </div>
 
       {/* Detailed Bar Chart */}
-      <div className="glass-panel">
+      <div className="glass-panel mt-8">
         <h3 className="text-xl font-bold mb-6">Spending by Category</h3>
         <div className="flex-col gap-5">
           {entries.map(([category, amount]) => {
             const meta = CATEGORY_META[category] || CATEGORY_META.Other;
-            const pct = Math.round((amount / total) * 100);
+            const pct = Math.round((amount / budget) * 100);
             return (
               <div key={category}>
                 <div className="flex-between mb-2">
@@ -89,13 +95,13 @@ export default async function BudgetPage({ params }) {
                   </div>
                   <div className="flex-row gap-3">
                     <span className="text-sm text-muted">{pct}%</span>
-                    <span className="font-bold">${amount}</span>
+                    <span className="font-bold">₹{amount.toLocaleString()}</span>
                   </div>
                 </div>
                 <div className="progress-bar" style={{ height: '10px' }}>
                   <div
                     className="progress-fill"
-                    style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${meta.color}, ${meta.color}88)` }}
+                    style={{ width: `${Math.min(100, pct)}%`, background: `linear-gradient(90deg, ${meta.color}, ${meta.color}88)` }}
                   />
                 </div>
               </div>

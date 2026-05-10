@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Calendar, Map, Camera, ArrowRight, Sparkles, X, CheckCircle } from "lucide-react";
 import "./newTrip.css";
@@ -14,15 +14,27 @@ const COVER_SUGGESTIONS = [
 
 export default function NewTrip() {
   const router = useRouter();
-  const [formData, setFormData] = useState({ name: "", startDate: "", endDate: "", description: "", coverPhoto: "" });
+  const [formData, setFormData] = useState({ 
+    name: "", startDate: "", endDate: "", description: "", coverPhoto: "",
+    destination: "Paris", tripType: "International", modeOfTravel: "Flight", budget: 5000
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
   const [step, setStep] = useState(1);
   const [fileName, setFileName] = useState("");
 
+  useEffect(() => {
+    // Read from window.location instead of useSearchParams to avoid Suspense requirement
+    const params = new URLSearchParams(window.location.search);
+    const dest = params.get('destination');
+    if (dest) {
+      setFormData(prev => ({ ...prev, destination: dest, name: `${dest} Trip` }));
+    }
+  }, []);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prev => ({ ...prev, [name]: name === 'budget' ? Number(value) : value }));
   };
 
   const handleImageUpload = (e) => {
@@ -47,7 +59,8 @@ export default function NewTrip() {
       });
       const data = await res.json();
       if (res.ok && data.success) {
-        router.push(`/trips/builder?id=${data.data._id}`);
+        // Redirect to local flights page to pick a flight instead of MakeMyTrip
+        router.push(`/trips/${data.data._id}/flights`);
       } else {
         setErrorMsg(data.error || "Failed to create trip");
         setIsSubmitting(false);
@@ -135,6 +148,62 @@ export default function NewTrip() {
               />
             </div>
 
+            <div className="form-group">
+              <label className="form-label" htmlFor="destination">Destination *</label>
+              <input
+                id="destination" name="destination" type="text"
+                placeholder='e.g. "Paris", "Bali", "Goa"'
+                value={formData.destination} onChange={handleChange} required
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label flex-between" htmlFor="budget">
+                <span>Trip Budget</span>
+                <span className="font-bold text-primary">₹{formData.budget}</span>
+              </label>
+              <input
+                id="budget" name="budget" type="range"
+                min="5000" max="500000" step="1000"
+                value={formData.budget} onChange={handleChange} 
+                style={{ width: '100%', accentColor: 'var(--primary)', height: '6px', borderRadius: '4px', appearance: 'none', background: 'var(--border-color)' }}
+              />
+              <div className="flex-between text-xs text-muted mt-2">
+                <span>₹5,000</span>
+                <span>₹5,00,000</span>
+              </div>
+            </div>
+
+            <div className="grid-2">
+              <div className="form-group">
+                <label className="form-label" htmlFor="tripType">Trip Type</label>
+                <select id="tripType" name="tripType" value={formData.tripType} onChange={handleChange} className="form-select">
+                  <option value="Regional">Regional</option>
+                  <option value="International">International</option>
+                </select>
+              </div>
+
+              {formData.tripType === 'Regional' && (
+                <div className="form-group">
+                  <label className="form-label" htmlFor="modeOfTravel">Mode of Travel</label>
+                  <select id="modeOfTravel" name="modeOfTravel" value={formData.modeOfTravel} onChange={handleChange} className="form-select">
+                    <option value="Flight">Flight</option>
+                    <option value="Train">Train</option>
+                    <option value="Bus">Bus</option>
+                    <option value="Car">Car</option>
+                  </select>
+                </div>
+              )}
+              {formData.tripType === 'International' && (
+                <div className="form-group">
+                  <label className="form-label" htmlFor="modeOfTravel">Mode of Travel</label>
+                  <select id="modeOfTravel" name="modeOfTravel" value={formData.modeOfTravel} onChange={handleChange} className="form-select" disabled>
+                    <option value="Flight">Flight</option>
+                  </select>
+                </div>
+              )}
+            </div>
+
             <div className="grid-2">
               <div className="form-group">
                 <label className="form-label" htmlFor="startDate">
@@ -192,7 +261,7 @@ export default function NewTrip() {
                     Creating...
                   </>
                 ) : (
-                  <>Continue to Itinerary <ArrowRight size={18} /></>
+                  <>Continue to Flights <ArrowRight size={18} /></>
                 )}
               </button>
             </div>
@@ -202,3 +271,4 @@ export default function NewTrip() {
     </div>
   );
 }
+

@@ -1,81 +1,70 @@
-# Traveloop
+# ✈️ Traveloop
 
-Traveloop is a personalized, intelligent, and collaborative platform that transforms the way individuals plan and experience travel.
+Traveloop is a personalized, intelligent, and collaborative platform that transforms the way individuals plan and experience travel. Built for the modern traveler, it combines seamless itinerary management with real-time budget tracking.
 
-## Project File Structure
+## 🚀 Tech Stack
 
-To ensure a production-ready, maintainable, and highly understandable codebase, we use a structured folder layout.
+- **Frontend**: Next.js 16 (App Router), React 19, Lucide React (Icons)
+- **Backend**: Next.js API Routes, NextAuth.js (Authentication)
+- **Database**: MongoDB with Mongoose (ODM)
+- **Styling**: Vanilla CSS (Modern Design System)
+
+## 📁 Project File Structure
+
+To ensure a production-ready and maintainable codebase, we follow a modular structure:
 
 ```text
 Traveloop/
-├── src/                      # Source code of the application
-│   ├── app/                  # Next.js 13+ App Router (Pages & API routes)
-│   │   ├── api/              # API endpoints (e.g., auth, users, trips)
-│   │   ├── dashboard/        # Dashboard page & routes
-│   │   ├── explore/          # Explore destinations page
-│   │   ├── login/            # Login page
-│   │   ├── profile/          # User profile page
-│   │   ├── signup/           # Signup page
-│   │   ├── trips/            # Trips management page
-│   │   ├── globals.css       # Global stylesheet
-│   │   ├── layout.js         # Root layout structure
-│   │   └── page.js           # Main landing page
-│   │
-│   ├── components/           # Reusable React components
-│   │   ├── layout/           # Global layout components (Navbar, AuthProvider, etc.)
-│   │   └── ui/               # Generic UI components (Buttons, Inputs, Modals, Cards)
-│   │
-│   ├── lib/                  # Library configurations and core setup
-│   │   └── mongodb.js        # MongoDB connection utility
-│   │
-│   ├── models/               # Mongoose Database Models (Schema definitions)
-│   │   ├── Trip.js           # Trip model
-│   │   └── User.js           # User model
-│   │
-│   ├── hooks/                # Custom React Hooks (e.g., useFetch, useAuth)
-│   ├── services/             # Abstractions for external API calls and services
-│   ├── utils/                # Helper functions, formatters, and utilities
-│   └── constants/            # Application-wide constants and enums
-│
-├── .gitignore                # Git ignore rules
-├── package.json              # Project dependencies and npm scripts
-├── next.config.mjs           # Next.js configuration
-├── eslint.config.mjs         # ESLint configuration for code quality
-└── seed.js                   # Database seeding script
+├── sample-data/              # Example data for your project
+│   ├── seed-trips.js         # Adds example trips to your database
+│   └── seed-community.mjs    # Adds example community posts
+├── src/                      # Your main code folder
+│   ├── app/                  # Next.js 16 Website Pages
+│   │   ├── api/              # Backend connection code
+│   │   ├── dashboard/        # The user's main home page
+│   │   ├── trips/            # Booking steps (Flights, Hotels, Payment)
+│   │   ├── globals.css       # All website design and colors
+│   │   └── layout.js         # The main website frame
+│   ├── components/           # Parts of the website (Navbar, Buttons)
+│   │   ├── layout/           # Shared parts like the Menu
+│   │   └── ui/               # Simple parts like Buttons and Inputs
+│   ├── db-setup/             # Database connection setup
+│   ├── database-models/      # Database tables (User, Trip)
+│   ├── middleware.js         # Login security check
+│   └── helpers/              # Useful code snippets (Formatters)
+├── .env.example              # Example file for your settings
+└── package.json              # List of tools used in the project
 ```
 
-## Folder Responsibilities
+## 🛠️ Getting Started
 
-- **`app/`**: Contains all the routes, both for rendering pages and for API endpoints. It uses the Next.js App Router conventions (`page.js`, `layout.js`).
-- **`components/`**: Divided into `layout` (for structural components like Navbars and Footers) and `ui` (for atomic reusable components like Buttons and Modals).
-- **`lib/`**: Contains core configurations like database connections and third-party integrations (e.g., `mongodb.js`).
-- **`models/`**: Stores Mongoose schemas to define the shape of your data in MongoDB.
-- **`hooks/`, `services/`, `utils/`, `constants/`**: Foundational directories for scalable development to separate logic from UI components.
-
-## Getting Started
-
-1. **Install Dependencies**:
+1. **Clone & Install**:
    ```bash
    npm install
    ```
 
-2. **Set up Environment Variables**:
-   Create a `.env.local` file in the root directory and add your MongoDB connection string and NextAuth secrets.
+2. **Environment Setup**:
+   Create a `.env.local` based on `.env.example`:
    ```env
    MONGODB_URI=your_mongodb_connection_string
-   NEXTAUTH_SECRET=your_nextauth_secret
+   NEXTAUTH_SECRET=your_secret
    ```
 
-3. **Run the Development Server**:
+3. **Seed Data (Optional)**:
+   ```bash
+   node scripts/seed-trips.js
+   ```
+
+4. **Run Development**:
    ```bash
    npm run dev
    ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to start exploring!
 
-## Seeding the Database
+## ✨ Key Features
 
-If you need to populate the database with initial test data, run:
-```bash
-node seed.js
-```
+- **Sequential Booking Flow**: From destination search to flights, hotels, and checkout.
+- **Real-time Budget Tracker**: Dynamic cost calculation in Indian Rupees (₹).
+- **Protected Routes**: Secure authentication using NextAuth.
+- **Responsive Design**: Premium aesthetics inspired by modern travel platforms.

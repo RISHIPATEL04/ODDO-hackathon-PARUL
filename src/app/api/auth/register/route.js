@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import bcrypt from 'bcryptjs';
-import connectMongo from '@/lib/mongodb';
-import User from '@/models/User';
+import connectMongo from '@/db-setup/mongodb';
+import User from '@/database-models/User';
 
 export async function POST(request) {
   try {
@@ -43,3 +43,4 @@ export async function POST(request) {
     );
   }
 }
+

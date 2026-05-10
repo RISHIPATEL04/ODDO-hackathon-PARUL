@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Plus, MapPin, Calendar, ArrowRight, TrendingUp, Clock, Users, Sparkles, BarChart2, CheckCircle } from "lucide-react";
-import connectMongo from "@/lib/mongodb";
-import Trip from "@/models/Trip";
+import connectMongo from "@/db-setup/mongodb";
+import Trip from "@/database-models/Trip";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import "./dashboard.css";
@@ -12,7 +12,7 @@ export default async function Dashboard() {
   if (!session) redirect("/login");
 
   await connectMongo();
-  const trips = await Trip.find({ userId: session.user.id }).sort({ startDate: 1 });
+  const trips = await Trip.find({ userId: session.user.id }).sort({ createdAt: -1 });
 
   const tripData = trips.map(t => ({
     _id: t._id.toString(),
@@ -79,7 +79,7 @@ export default async function Dashboard() {
             <TrendingUp size={20} />
           </div>
           <div>
-            <div className="dash-stat-num">$2.4K</div>
+            <div className="dash-stat-num">₹2.4K</div>
             <div className="dash-stat-lbl">Budget Tracked</div>
           </div>
         </div>
@@ -92,7 +92,7 @@ export default async function Dashboard() {
           {upcomingTrip && (
             <div className="dash-section">
               <div className="section-header flex-between mb-4">
-                <h2 className="section-title">Next Adventure</h2>
+                <h2 className="section-title">Latest Adventure</h2>
                 <Link href={`/trips/${upcomingTrip._id}`} className="btn btn-ghost btn-sm">
                   Open <ArrowRight size={14} />
                 </Link>
@@ -123,52 +123,7 @@ export default async function Dashboard() {
             </div>
           )}
 
-          {/* All Trips */}
-          <div className="dash-section">
-            <div className="section-header flex-between mb-4">
-              <h2 className="section-title">All Trips</h2>
-              <Link href="/trips/new" className="btn btn-secondary btn-sm">
-                <Plus size={14} /> New
-              </Link>
-            </div>
-            {tripData.length > 0 ? (
-              <div className="trips-grid">
-                {tripData.map(trip => (
-                  <Link key={trip._id} href={`/trips/${trip._id}`} className="trip-card-link">
-                    <div className="trip-mini-card">
-                      <div
-                        className="trip-mini-img"
-                        style={{ backgroundImage: `url(${trip.coverPhoto})` }}
-                      />
-                      <div className="trip-mini-info">
-                        <h4 className="trip-mini-name">{trip.name}</h4>
-                        <p className="trip-mini-date">
-                          <Calendar size={12} />
-                          {trip.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} –{' '}
-                          {trip.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </p>
-                        <div className="trip-mini-footer">
-                          <span className="badge badge-primary">{trip.stops} stops</span>
-                          <ArrowRight size={14} className="text-muted" />
-                        </div>
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            ) : (
-              <div className="empty-state">
-                <div className="empty-icon">
-                  <MapPin size={32} />
-                </div>
-                <h3 className="text-lg font-bold">No trips yet</h3>
-                <p className="text-muted text-sm">Start planning your first adventure!</p>
-                <Link href="/trips/new" className="btn btn-primary">
-                  <Plus size={16} /> Create First Trip
-                </Link>
-              </div>
-            )}
-          </div>
+          {/* All Trips Grid Removed per user request */}
         </div>
 
         {/* ===== RIGHT SIDEBAR ===== */}
@@ -196,58 +151,62 @@ export default async function Dashboard() {
             </div>
           </div>
 
-          {/* AI Suggestions */}
-          <div className="glass-panel dash-widget">
-            <div className="flex-between mb-4">
-              <h3 className="widget-title">AI Suggestions</h3>
-              <span className="badge badge-accent">
-                <Sparkles size={10} /> Gemini
-              </span>
-            </div>
-            <div className="ai-suggestions">
-              {['Kyoto, Japan', 'Amalfi Coast, Italy', 'Banff, Canada'].map(dest => (
-                <Link href="/explore" key={dest} className="ai-suggestion-item">
-                  <div className="suggestion-dot" />
-                  <span>{dest}</span>
-                  <ArrowRight size={13} className="text-muted ml-auto" />
-                </Link>
-              ))}
-            </div>
-            <Link href="/explore" className="btn btn-secondary btn-sm w-full mt-4" style={{ justifyContent: 'center' }}>
-              See All Destinations
-            </Link>
-          </div>
+
 
           {/* Budget Overview */}
-          <div className="glass-panel dash-widget">
-            <div className="flex-between mb-4">
-              <h3 className="widget-title">Budget Overview</h3>
-              <TrendingUp size={16} className="text-success" />
-            </div>
-            <div className="budget-total">$2,450 <span>estimated</span></div>
-            <div className="progress-bar mb-2">
-              <div className="progress-fill" style={{ width: '62%' }} />
-            </div>
-            <p className="text-xs text-muted mb-4">62% of budget allocated</p>
-            <div className="budget-breakdown">
-              {[
-                { label: 'Flights', pct: 35, color: '#2563EB' },
-                { label: 'Hotels', pct: 42, color: '#10B981' },
-                { label: 'Activities', pct: 15, color: '#F59E0B' },
-                { label: 'Food', pct: 8, color: '#8B5CF6' },
-              ].map(item => (
-                <div key={item.label} className="budget-row">
-                  <div className="flex-row gap-2">
-                    <div className="budget-dot" style={{ background: item.color }} />
-                    <span className="text-sm">{item.label}</span>
-                  </div>
-                  <span className="text-sm font-semibold">{item.pct}%</span>
+          {tripData.length > 0 && (() => {
+            const totalBudget = trips.reduce((acc, t) => acc + (t.budget || 0), 0);
+            const totalFlight = trips.reduce((acc, t) => acc + (t.flightCost || 0), 0);
+            const totalHotel = trips.reduce((acc, t) => acc + (t.hotelCost || 0), 0);
+            
+            // Add other expenses
+            const totalOtherExpenses = trips.reduce((acc, t) => {
+              if (t.expenses) {
+                return acc + t.expenses.reduce((eAcc, e) => eAcc + e.estimatedCost, 0);
+              }
+              return acc;
+            }, 0);
+
+            const totalSpent = totalFlight + totalHotel + totalOtherExpenses;
+            const pct = totalBudget > 0 ? Math.round((totalSpent / totalBudget) * 100) : 0;
+            
+            return (
+              <div className="glass-panel dash-widget">
+                <div className="flex-between mb-4">
+                  <h3 className="widget-title">Total Budget Overview</h3>
+                  <TrendingUp size={16} className={pct > 100 ? "text-error" : "text-success"} />
                 </div>
-              ))}
-            </div>
-          </div>
+                <div className="budget-total">
+                  ₹{totalSpent.toLocaleString()} <span>spent of ₹{totalBudget.toLocaleString()}</span>
+                </div>
+                <div className="progress-bar mb-2">
+                  <div className="progress-fill" style={{ width: `${Math.min(100, pct)}%`, background: pct > 100 ? 'var(--error)' : 'var(--primary)' }} />
+                </div>
+                <p className="text-xs text-muted mb-4">{pct}% of total budget allocated</p>
+                <div className="budget-breakdown">
+                  {[
+                    { label: 'Flights', amt: totalFlight, color: '#2563EB' },
+                    { label: 'Hotels', amt: totalHotel, color: '#10B981' },
+                    { label: 'Other', amt: totalOtherExpenses, color: '#F59E0B' },
+                  ].filter(i => i.amt > 0).map(item => {
+                    const itemPct = totalSpent > 0 ? Math.round((item.amt / totalSpent) * 100) : 0;
+                    return (
+                      <div key={item.label} className="budget-row">
+                        <div className="flex-row gap-2">
+                          <div className="budget-dot" style={{ background: item.color }} />
+                          <span className="text-sm">{item.label}</span>
+                        </div>
+                        <span className="text-sm font-semibold">{itemPct}%</span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })()}
         </div>
       </div>
     </div>
   );
 }
+

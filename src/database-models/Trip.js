@@ -44,10 +44,22 @@ const TripSchema = new mongoose.Schema({
   description: { type: String, default: '' },
   coverPhoto: { type: String, default: '' },
   isPublic: { type: Boolean, default: false },
+  destination: { type: String, default: '' },
+  tripType: { type: String, enum: ['Regional', 'International'], default: 'Regional' },
+  modeOfTravel: { type: String, default: 'Flight' },
+  budget: { type: Number, default: 5000 },
+  flightCost: { type: Number, default: 0 },
+  hotelCost: { type: Number, default: 0 },
   stops: [StopSchema],
   expenses: [ExpenseSchema],
   checklist: [ChecklistItemSchema],
   notes: [NoteSchema]
 }, { timestamps: true });
 
-export default mongoose.models.Trip || mongoose.model('Trip', TripSchema);
+// Force Mongoose to reload the schema in development
+if (mongoose.models.Trip) {
+  delete mongoose.models.Trip;
+}
+
+export default mongoose.model('Trip', TripSchema);
+

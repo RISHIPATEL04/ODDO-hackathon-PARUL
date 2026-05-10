@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import mongoose from 'mongoose';
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
-import connectMongo from '@/lib/mongodb';
-import User from '@/models/User';
+import connectMongo from '@/db-setup/mongodb';
+import User from '@/database-models/User';
 
 export async function GET(request, { params }) {
   try {

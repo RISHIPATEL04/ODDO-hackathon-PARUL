@@ -50,10 +50,6 @@ export default function LandingPage() {
       {/* ===== HERO ===== */}
       <section className="landing-hero">
         <div className="hero-content">
-          <div className="hero-pill animate-fade-in">
-            <Sparkles size={14} />
-            <span>AI-Powered Travel Planning</span>
-          </div>
           <h1 className="hero-title animate-slide-up">
             Plan Your Perfect<br />
             <span className="hero-title-gradient">Journey Effortlessly</span>
@@ -81,7 +77,7 @@ export default function LandingPage() {
               <span className="search-label">When</span>
               <span className="search-value">Pick a date</span>
             </div>
-            <Link href="/signup" className="search-btn">
+            <Link href="/trips/new" className="search-btn">
               <Search size={16} /> Search
             </Link>
           </div>
@@ -109,7 +105,7 @@ export default function LandingPage() {
               <div className="float-icon">🗺️</div>
               <div>
                 <div className="float-title">Smart Itinerary</div>
-                <div className="float-sub">AI-generated plans</div>
+                <div className="float-sub">Custom travel plans</div>
               </div>
             </div>
             <div className="hero-float-card bottom-right">
@@ -138,7 +134,7 @@ export default function LandingPage() {
 
         <div className="dest-grid">
           {DESTINATIONS.map(dest => (
-            <div key={dest.name} className="dest-card hover-lift">
+            <Link href={`/trips/new?destination=${dest.name}`} key={dest.name} className="dest-card hover-lift" style={{ textDecoration: 'none' }}>
               <div className="dest-img-wrap">
                 <img src={dest.image} alt={dest.name} className="dest-img" />
                 <div className="dest-overlay" />
@@ -158,7 +154,7 @@ export default function LandingPage() {
                 </div>
                 <span className="dest-price">{dest.price}</span>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </section>
@@ -172,7 +168,7 @@ export default function LandingPage() {
           </div>
           <div className="why-grid">
             {[
-              { icon: Sparkles, color: '#6366F1', bg: '#EEF2FF', title: 'AI Trip Planning', desc: 'Gemini AI generates personalized itineraries tailored to your preferences, budget, and travel style.' },
+              { icon: MapPin, color: '#6366F1', bg: '#EEF2FF', title: 'Smart Trip Planning', desc: 'Easily organize personalized itineraries tailored to your preferences, budget, and travel style.' },
               { icon: Users, color: '#0EA5E9', bg: '#F0F9FF', title: 'Collaborative Planning', desc: 'Plan trips together. Share itineraries, split expenses, and vote on activities with your travel group.' },
               { icon: Shield, color: '#10B981', bg: '#ECFDF5', title: 'Smart Budget Tracking', desc: 'Real-time expense tracking, category breakdowns, and budget alerts so you never overspend.' },
               { icon: Globe, color: '#F59E0B', bg: '#FFFBEB', title: '120+ Destinations', desc: 'Curated destination guides, local tips, and insider recommendations for every corner of the world.' },
@@ -226,3 +222,4 @@ export default function LandingPage() {
     </div>
   );
 }
+

@@ -2,7 +2,7 @@ import { withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 export default withAuth(
-  function proxy(req) {
+  function authGuard(req) {
     return NextResponse.next();
   },
   {
@@ -12,6 +12,7 @@ export default withAuth(
     pages: {
       signIn: "/login",
     },
+    secret: process.env.NEXTAUTH_SECRET || "default_secret_for_development_only",
   }
 );
 
@@ -32,3 +33,4 @@ export const config = {
     '/((?!api/auth|_next/static|_next/image|favicon.ico|login|signup|explore|$).*)',
   ],
 };
+

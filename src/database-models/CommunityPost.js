@@ -19,3 +19,4 @@ const CommunityPostSchema = new mongoose.Schema({
 }, { timestamps: true });
 
 export default mongoose.models.CommunityPost || mongoose.model('CommunityPost', CommunityPostSchema);
+
