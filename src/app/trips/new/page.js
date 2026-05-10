@@ -2,20 +2,22 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Calendar, Map, Camera, ArrowRight } from "lucide-react";
+import { Calendar, Map, Camera, ArrowRight, Sparkles, X, CheckCircle } from "lucide-react";
 import "./newTrip.css";
+
+const COVER_SUGGESTIONS = [
+  "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=800&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1530521954074-e64f6810b32d?q=80&w=800&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?q=80&w=800&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1488085061387-422e29b40080?q=80&w=800&auto=format&fit=crop",
+];
 
 export default function NewTrip() {
   const router = useRouter();
-  const [formData, setFormData] = useState({
-    name: "",
-    startDate: "",
-    endDate: "",
-    description: "",
-    coverPhoto: ""
-  });
+  const [formData, setFormData] = useState({ name: "", startDate: "", endDate: "", description: "", coverPhoto: "" });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
+  const [step, setStep] = useState(1);
   const [fileName, setFileName] = useState("");
 
   const handleChange = (e) => {
@@ -25,34 +27,25 @@ export default function NewTrip() {
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      if (file.size > 5 * 1024 * 1024) {
-        setErrorMsg("Image size should be less than 5MB");
-        return;
-      }
-      setFileName(file.name);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setFormData(prev => ({ ...prev, coverPhoto: reader.result }));
-      };
-      reader.readAsDataURL(file);
-    }
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { setErrorMsg("Image size should be less than 5MB"); return; }
+    setFileName(file.name);
+    const reader = new FileReader();
+    reader.onloadend = () => setFormData(prev => ({ ...prev, coverPhoto: reader.result }));
+    reader.readAsDataURL(file);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setErrorMsg("");
-
     try {
-      const res = await fetch('/api/trips', { 
-        method: 'POST', 
+      const res = await fetch('/api/trips', {
+        method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData) 
+        body: JSON.stringify(formData)
       });
-      
       const data = await res.json();
-      
       if (res.ok && data.success) {
         router.push(`/trips/builder?id=${data.data._id}`);
       } else {
@@ -60,117 +53,151 @@ export default function NewTrip() {
         setIsSubmitting(false);
       }
     } catch (err) {
-      console.error(err);
-      setErrorMsg("An error occurred while communicating with the server.");
+      setErrorMsg("An error occurred. Please try again.");
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="new-trip-container animate-slide-up">
-      <div className="glass-panel max-w-3xl mx-auto">
-        <header className="mb-8 text-center">
-          <div className="icon-wrapper bg-primary-light mx-auto mb-4">
-            <Map size={32} className="text-primary" />
-          </div>
-          <h1 className="text-3xl font-bold">Plan a New Trip</h1>
-          <p className="text-muted mt-2">Where is your next adventure taking you?</p>
-        </header>
-
-        {errorMsg && (
-          <div className="bg-danger/10 border border-danger text-danger text-sm rounded-md p-3 mb-6 w-full text-center" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', borderColor: '#EF4444', color: '#EF4444' }}>
-            {errorMsg}
-          </div>
-        )}
-
-        <form onSubmit={handleSubmit} className="flex-col">
-          <div className="form-group">
-            <label htmlFor="name" className="font-medium mb-2 block">Trip Name</label>
-            <input 
-              type="text" 
-              id="name" 
-              name="name" 
-              placeholder="e.g. Euro Summer 2024" 
-              value={formData.name}
-              onChange={handleChange}
-              required 
-            />
+    <div className="new-trip-page animate-fade-in">
+      <div className="new-trip-container">
+        {/* Left - Preview */}
+        <div className="new-trip-preview">
+          <div
+            className="preview-cover"
+            style={{ backgroundImage: formData.coverPhoto ? `url(${formData.coverPhoto})` : 'none' }}
+          >
+            {!formData.coverPhoto && (
+              <div className="preview-placeholder">
+                <Map size={48} className="text-muted" />
+                <p className="text-muted mt-2">Cover photo preview</p>
+              </div>
+            )}
+            {formData.coverPhoto && <div className="preview-overlay" />}
+            {formData.name && (
+              <div className="preview-name-badge">
+                <h3 className="preview-trip-name">{formData.name}</h3>
+                {formData.startDate && (
+                  <p className="preview-trip-dates">
+                    {new Date(formData.startDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                    {formData.endDate && ` — ${new Date(formData.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}`}
+                  </p>
+                )}
+              </div>
+            )}
           </div>
 
-          <div className="grid-cols-2">
-            <div className="form-group">
-              <label htmlFor="startDate" className="font-medium mb-2 block flex-row">
-                <Calendar size={16} className="text-muted"/> Start Date
-              </label>
-              <input 
-                type="date" 
-                id="startDate" 
-                name="startDate" 
-                value={formData.startDate}
-                onChange={handleChange}
-                required 
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="endDate" className="font-medium mb-2 block flex-row">
-                <Calendar size={16} className="text-muted"/> End Date
-              </label>
-              <input 
-                type="date" 
-                id="endDate" 
-                name="endDate" 
-                value={formData.endDate}
-                onChange={handleChange}
-                required 
-              />
+          {/* Suggested Covers */}
+          <div className="preview-suggestions">
+            <p className="text-xs text-muted font-semibold mb-2">SUGGESTED COVERS</p>
+            <div className="suggestions-grid">
+              {COVER_SUGGESTIONS.map((url, i) => (
+                <button
+                  key={i}
+                  onClick={() => setFormData(prev => ({ ...prev, coverPhoto: url }))}
+                  className={`suggestion-img-btn ${formData.coverPhoto === url ? 'selected' : ''}`}
+                >
+                  <img src={url} alt={`Suggestion ${i + 1}`} />
+                  {formData.coverPhoto === url && (
+                    <div className="suggestion-check">
+                      <CheckCircle size={14} />
+                    </div>
+                  )}
+                </button>
+              ))}
             </div>
           </div>
+        </div>
 
-          <div className="form-group">
-            <label htmlFor="description" className="font-medium mb-2 block">Description (Optional)</label>
-            <textarea 
-              id="description" 
-              name="description" 
-              placeholder="What's the goal of this trip?" 
-              rows="3"
-              value={formData.description}
-              onChange={handleChange}
-            ></textarea>
+        {/* Right - Form */}
+        <div className="new-trip-form-wrap">
+          <div className="new-trip-form-header">
+            <div className="icon-box icon-box-primary icon-box-lg mb-4">
+              <Sparkles size={24} />
+            </div>
+            <h1 className="text-3xl font-bold">Plan a New Trip</h1>
+            <p className="text-muted mt-2">Where is your next adventure taking you?</p>
           </div>
 
-          <div className="form-group cover-upload flex-col flex-center text-center p-8 mt-4" style={{
-            backgroundImage: formData.coverPhoto ? `url(${formData.coverPhoto})` : 'none',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            color: formData.coverPhoto ? 'white' : 'inherit',
-            textShadow: formData.coverPhoto ? '0 2px 4px rgba(0,0,0,0.8)' : 'none'
-          }}>
-            <Camera size={32} className={formData.coverPhoto ? "text-white mb-2" : "text-muted mb-2"} />
-            <p className="font-medium">{fileName || "Upload a Cover Photo"}</p>
-            {!formData.coverPhoto && <p className="text-sm text-muted">JPEG, PNG up to 5MB</p>}
-            <input 
-              type="file" 
-              id="coverPhoto" 
-              className="hidden-input" 
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-            <label htmlFor="coverPhoto" className="btn btn-secondary mt-4" style={{
-              backgroundColor: formData.coverPhoto ? 'rgba(0,0,0,0.5)' : '',
-              color: formData.coverPhoto ? 'white' : ''
-            }}>
-              {formData.coverPhoto ? "Change Photo" : "Choose File"}
-            </label>
-          </div>
+          {errorMsg && (
+            <div className="alert alert-error mb-6">
+              <X size={16} className="flex-shrink-0" /> {errorMsg}
+            </div>
+          )}
 
-          <div className="form-actions mt-8 flex-between">
-            <button type="button" onClick={() => router.back()} className="btn btn-secondary">Cancel</button>
-            <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
-              {isSubmitting ? 'Creating...' : 'Continue to Itinerary'}
-              <ArrowRight size={20} />
-            </button>
-          </div>
-        </form>
+          <form onSubmit={handleSubmit} className="new-trip-form">
+            <div className="form-group">
+              <label className="form-label" htmlFor="name">Trip Name *</label>
+              <input
+                id="name" name="name" type="text"
+                placeholder='e.g. "Euro Summer 2025" or "Goa Beach Escape"'
+                value={formData.name} onChange={handleChange} required
+              />
+            </div>
+
+            <div className="grid-2">
+              <div className="form-group">
+                <label className="form-label" htmlFor="startDate">
+                  <Calendar size={14} className="inline mr-1" /> Start Date *
+                </label>
+                <input
+                  id="startDate" name="startDate" type="date"
+                  value={formData.startDate} onChange={handleChange} required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label" htmlFor="endDate">
+                  <Calendar size={14} className="inline mr-1" /> End Date *
+                </label>
+                <input
+                  id="endDate" name="endDate" type="date"
+                  value={formData.endDate} onChange={handleChange} required
+                />
+              </div>
+            </div>
+
+            <div className="form-group">
+              <label className="form-label" htmlFor="description">Description (Optional)</label>
+              <textarea
+                id="description" name="description"
+                placeholder="What's the vibe? Backpacking, luxury, adventure, family..."
+                rows="3" value={formData.description} onChange={handleChange}
+              />
+            </div>
+
+            <div className="form-group">
+              <label className="form-label">Cover Photo</label>
+              <label htmlFor="coverPhoto" className="upload-area">
+                <Camera size={20} className="text-muted" />
+                <span className="text-sm font-medium">
+                  {fileName || "Upload a custom photo"}
+                </span>
+                <span className="text-xs text-muted">JPEG, PNG up to 5MB</span>
+                <input
+                  id="coverPhoto" type="file" accept="image/*"
+                  onChange={handleImageUpload} className="hidden"
+                  style={{ display: 'none' }}
+                />
+              </label>
+            </div>
+
+            <div className="form-actions">
+              <button type="button" onClick={() => router.back()} className="btn btn-secondary">
+                Cancel
+              </button>
+              <button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <div className="spinner" style={{ width: 16, height: 16, borderWidth: 2 }} />
+                    Creating...
+                  </>
+                ) : (
+                  <>Continue to Itinerary <ArrowRight size={18} /></>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );

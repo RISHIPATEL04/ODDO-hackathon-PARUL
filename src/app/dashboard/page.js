@@ -1,131 +1,252 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { Plus, MapPin, Calendar as CalIcon, ArrowRight, TrendingUp } from "lucide-react";
-import "./dashboard.css";
+import { Plus, MapPin, Calendar, ArrowRight, TrendingUp, Clock, Users, Sparkles, BarChart2, CheckCircle } from "lucide-react";
 import connectMongo from "@/lib/mongodb";
 import Trip from "@/models/Trip";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import "./dashboard.css";
 
 export default async function Dashboard() {
   const session = await getServerSession(authOptions);
-
-  if (!session) {
-    redirect("/login");
-  }
+  if (!session) redirect("/login");
 
   await connectMongo();
-  // Fetch trips for the currently logged-in user
   const trips = await Trip.find({ userId: session.user.id }).sort({ startDate: 1 });
-  
+
   const tripData = trips.map(t => ({
     _id: t._id.toString(),
     name: t.name,
+    description: t.description || "",
     startDate: new Date(t.startDate),
     endDate: new Date(t.endDate),
     stops: t.stops.length,
-    coverPhoto: t.coverPhoto || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=2021&auto=format&fit=crop"
+    coverPhoto: t.coverPhoto || "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?q=80&w=1200&auto=format&fit=crop",
   }));
 
+  const upcomingTrip = tripData[0] || null;
+  const firstName = session.user.name?.split(' ')[0] || 'Traveler';
+
+  const today = new Date();
+  const daysUntil = upcomingTrip
+    ? Math.max(0, Math.ceil((upcomingTrip.startDate - today) / (1000 * 60 * 60 * 24)))
+    : null;
+
   return (
-    <div className="dashboard-container animate-fade-in">
-      <header className="dashboard-header flex-between mb-8">
+    <div className="dash-page animate-fade-in">
+      {/* ===== HEADER ===== */}
+      <header className="dash-header">
         <div>
-          <h1 className="text-4xl font-bold" style={{ color: 'var(--primary)' }}>Welcome back, {session.user.name.split(' ')[0]}!</h1>
-          <p className="text-muted mt-2 text-lg">Ready to design your next journey?</p>
+          <p className="dash-greeting">Good morning, {firstName} 👋</p>
+          <h1 className="dash-title">Your Travel Hub</h1>
         </div>
-        <Link href="/trips/new" className="btn btn-primary" style={{ padding: '0.75rem 1.5rem', borderRadius: '12px' }}>
-          <Plus size={20} />
-          Plan New Trip
+        <Link href="/trips/new" className="btn btn-primary">
+          <Plus size={18} /> Plan New Trip
         </Link>
       </header>
 
-      {tripData.length > 0 && (
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6">Your Next Adventure</h2>
-          <div className="glass-panel next-trip-hero" style={{ 
-            backgroundImage: `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.7)), url(${tripData[0].coverPhoto})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-            color: 'white',
-            padding: '3rem',
-            borderRadius: '24px',
-            minHeight: '300px',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'flex-end'
-          }}>
-            <h3 className="text-4xl font-bold mb-2">{tripData[0].name}</h3>
-            <div className="flex-row text-lg mb-6">
-              <CalIcon size={20} />
-              {tripData[0].startDate.toLocaleDateString()} - {tripData[0].endDate.toLocaleDateString()}
-            </div>
-            <Link href={`/trips/${tripData[0]._id}`} className="btn btn-primary" style={{ width: 'fit-content', background: 'white', color: 'var(--primary)' }}>
-              Open Itinerary <ArrowRight size={18} />
-            </Link>
+      {/* ===== STATS ROW ===== */}
+      <div className="dash-stats-row">
+        <div className="dash-stat-card">
+          <div className="dash-stat-icon" style={{ background: '#EFF6FF', color: '#2563EB' }}>
+            <MapPin size={20} />
           </div>
-        </section>
-      )}
+          <div>
+            <div className="dash-stat-num">{tripData.length}</div>
+            <div className="dash-stat-lbl">Total Trips</div>
+          </div>
+        </div>
+        <div className="dash-stat-card">
+          <div className="dash-stat-icon" style={{ background: '#ECFDF5', color: '#10B981' }}>
+            <CheckCircle size={20} />
+          </div>
+          <div>
+            <div className="dash-stat-num">{tripData.reduce((acc, t) => acc + t.stops, 0)}</div>
+            <div className="dash-stat-lbl">Destinations Planned</div>
+          </div>
+        </div>
+        <div className="dash-stat-card">
+          <div className="dash-stat-icon" style={{ background: '#FFF7ED', color: '#F97316' }}>
+            <Clock size={20} />
+          </div>
+          <div>
+            <div className="dash-stat-num">{daysUntil !== null ? daysUntil : '—'}</div>
+            <div className="dash-stat-lbl">Days Until Next Trip</div>
+          </div>
+        </div>
+        <div className="dash-stat-card">
+          <div className="dash-stat-icon" style={{ background: '#F5F3FF', color: '#8B5CF6' }}>
+            <TrendingUp size={20} />
+          </div>
+          <div>
+            <div className="dash-stat-num">$2.4K</div>
+            <div className="dash-stat-lbl">Budget Tracked</div>
+          </div>
+        </div>
+      </div>
 
-      <div className="dashboard-grid">
-        <section className="trips-section">
-          <h2 className="text-2xl font-bold mb-6">All Trips</h2>
-          {tripData.length > 0 ? (
-            <div className="grid-cols-2">
-              {tripData.map(trip => (
-                <Link href={`/trips/${trip._id}`} key={trip._id}>
-                  <div className="trip-card glass-panel" style={{ padding: 0, overflow: 'hidden', borderLeft: 'none', cursor: 'pointer' }}>
-                    <div style={{ 
-                      height: '160px', 
-                      backgroundImage: `url(${trip.coverPhoto})`,
-                      backgroundSize: 'cover',
-                      backgroundPosition: 'center'
-                    }} />
-                    <div style={{ padding: '1.5rem' }}>
-                      <h3 className="font-bold text-xl mb-2" style={{ color: 'var(--text-primary)' }}>{trip.name}</h3>
-                      <div className="flex-row text-sm text-muted mt-2">
-                        <CalIcon size={16} />
-                        {trip.startDate.toLocaleDateString()}
-                      </div>
-                    </div>
-                  </div>
+      <div className="dash-body">
+        {/* ===== LEFT COLUMN ===== */}
+        <div className="dash-main">
+          {/* Upcoming Trip Hero */}
+          {upcomingTrip && (
+            <div className="dash-section">
+              <div className="section-header flex-between mb-4">
+                <h2 className="section-title">Next Adventure</h2>
+                <Link href={`/trips/${upcomingTrip._id}`} className="btn btn-ghost btn-sm">
+                  Open <ArrowRight size={14} />
                 </Link>
-              ))}
-            </div>
-          ) : (
-            <div className="glass-panel text-center py-12" style={{ borderRadius: '24px' }}>
-              <MapPin size={48} className="text-muted mx-auto mb-4" />
-              <p className="text-muted text-lg mb-6">Your travel canvas is empty.</p>
-              <Link href="/trips/new" className="btn btn-primary">Create your first trip</Link>
+              </div>
+              <div
+                className="dash-hero-trip"
+                style={{
+                  backgroundImage: `linear-gradient(to top, rgba(15,23,42,0.85) 0%, rgba(15,23,42,0.2) 60%, transparent 100%), url(${upcomingTrip.coverPhoto})`
+                }}
+              >
+                <div className="dash-hero-content">
+                  <span className="dash-hero-badge">
+                    <Calendar size={12} /> {daysUntil} days away
+                  </span>
+                  <h3 className="dash-hero-name">{upcomingTrip.name}</h3>
+                  <p className="dash-hero-dates">
+                    {upcomingTrip.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} –{' '}
+                    {upcomingTrip.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                  </p>
+                  <div className="dash-hero-meta">
+                    <span><MapPin size={13} /> {upcomingTrip.stops} Destinations</span>
+                  </div>
+                </div>
+                <Link href={`/trips/${upcomingTrip._id}`} className="dash-hero-btn">
+                  View Itinerary <ArrowRight size={16} />
+                </Link>
+              </div>
             </div>
           )}
-        </section>
 
-        <section className="sidebar-section flex-col">
-          <div className="glass-panel stat-card" style={{ borderRadius: '24px' }}>
-            <div className="flex-between">
-              <h3 className="font-bold">Total Budget</h3>
-              <TrendingUp className="text-accent" />
+          {/* All Trips */}
+          <div className="dash-section">
+            <div className="section-header flex-between mb-4">
+              <h2 className="section-title">All Trips</h2>
+              <Link href="/trips/new" className="btn btn-secondary btn-sm">
+                <Plus size={14} /> New
+              </Link>
             </div>
-            <p className="text-4xl font-bold mt-4" style={{ color: 'var(--primary)' }}>$2,450</p>
-            <div className="progress-bar mt-6">
-              <div className="progress-fill bg-accent" style={{ width: '60%' }}></div>
+            {tripData.length > 0 ? (
+              <div className="trips-grid">
+                {tripData.map(trip => (
+                  <Link key={trip._id} href={`/trips/${trip._id}`} className="trip-card-link">
+                    <div className="trip-mini-card">
+                      <div
+                        className="trip-mini-img"
+                        style={{ backgroundImage: `url(${trip.coverPhoto})` }}
+                      />
+                      <div className="trip-mini-info">
+                        <h4 className="trip-mini-name">{trip.name}</h4>
+                        <p className="trip-mini-date">
+                          <Calendar size={12} />
+                          {trip.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} –{' '}
+                          {trip.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
+                        <div className="trip-mini-footer">
+                          <span className="badge badge-primary">{trip.stops} stops</span>
+                          <ArrowRight size={14} className="text-muted" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <div className="empty-icon">
+                  <MapPin size={32} />
+                </div>
+                <h3 className="text-lg font-bold">No trips yet</h3>
+                <p className="text-muted text-sm">Start planning your first adventure!</p>
+                <Link href="/trips/new" className="btn btn-primary">
+                  <Plus size={16} /> Create First Trip
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* ===== RIGHT SIDEBAR ===== */}
+        <div className="dash-sidebar">
+          {/* Quick Actions */}
+          <div className="glass-panel dash-widget">
+            <h3 className="widget-title">Quick Actions</h3>
+            <div className="quick-actions">
+              <Link href="/trips/new" className="quick-action-btn">
+                <div className="quick-action-icon" style={{ background: '#EFF6FF', color: '#2563EB' }}><Plus size={18} /></div>
+                <span>New Trip</span>
+              </Link>
+              <Link href="/explore" className="quick-action-btn">
+                <div className="quick-action-icon" style={{ background: '#ECFDF5', color: '#10B981' }}><MapPin size={18} /></div>
+                <span>Explore</span>
+              </Link>
+              <Link href="/profile" className="quick-action-btn">
+                <div className="quick-action-icon" style={{ background: '#F5F3FF', color: '#8B5CF6' }}><Users size={18} /></div>
+                <span>Profile</span>
+              </Link>
+              <Link href="/trips/builder" className="quick-action-btn">
+                <div className="quick-action-icon" style={{ background: '#FFF7ED', color: '#F97316' }}><BarChart2 size={18} /></div>
+                <span>Builder</span>
+              </Link>
             </div>
-            <p className="text-sm text-muted mt-2">60% of estimated budget used</p>
           </div>
 
-          <div className="glass-panel mt-4" style={{ borderRadius: '24px' }}>
-            <h3 className="font-bold mb-4">Trending Now</h3>
-            <div className="recommendation-list flex-col">
-              {['Kyoto, Japan', 'Amalfi Coast', 'Reykjavik, Iceland'].map(dest => (
-                <Link href="/explore" key={dest} className="flex-row" style={{ padding: '0.75rem 0', borderBottom: '1px solid var(--border-color)', color: 'var(--text-secondary)' }}>
-                  <MapPin size={16} className="text-secondary" />
-                  <span className="font-medium">{dest}</span>
+          {/* AI Suggestions */}
+          <div className="glass-panel dash-widget">
+            <div className="flex-between mb-4">
+              <h3 className="widget-title">AI Suggestions</h3>
+              <span className="badge badge-accent">
+                <Sparkles size={10} /> Gemini
+              </span>
+            </div>
+            <div className="ai-suggestions">
+              {['Kyoto, Japan', 'Amalfi Coast, Italy', 'Banff, Canada'].map(dest => (
+                <Link href="/explore" key={dest} className="ai-suggestion-item">
+                  <div className="suggestion-dot" />
+                  <span>{dest}</span>
+                  <ArrowRight size={13} className="text-muted ml-auto" />
                 </Link>
               ))}
             </div>
+            <Link href="/explore" className="btn btn-secondary btn-sm w-full mt-4" style={{ justifyContent: 'center' }}>
+              See All Destinations
+            </Link>
           </div>
-        </section>
+
+          {/* Budget Overview */}
+          <div className="glass-panel dash-widget">
+            <div className="flex-between mb-4">
+              <h3 className="widget-title">Budget Overview</h3>
+              <TrendingUp size={16} className="text-success" />
+            </div>
+            <div className="budget-total">$2,450 <span>estimated</span></div>
+            <div className="progress-bar mb-2">
+              <div className="progress-fill" style={{ width: '62%' }} />
+            </div>
+            <p className="text-xs text-muted mb-4">62% of budget allocated</p>
+            <div className="budget-breakdown">
+              {[
+                { label: 'Flights', pct: 35, color: '#2563EB' },
+                { label: 'Hotels', pct: 42, color: '#10B981' },
+                { label: 'Activities', pct: 15, color: '#F59E0B' },
+                { label: 'Food', pct: 8, color: '#8B5CF6' },
+              ].map(item => (
+                <div key={item.label} className="budget-row">
+                  <div className="flex-row gap-2">
+                    <div className="budget-dot" style={{ background: item.color }} />
+                    <span className="text-sm">{item.label}</span>
+                  </div>
+                  <span className="text-sm font-semibold">{item.pct}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

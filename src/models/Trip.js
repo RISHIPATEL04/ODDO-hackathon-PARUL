@@ -2,7 +2,11 @@ import mongoose from 'mongoose';
 
 const ActivitySchema = new mongoose.Schema({
   name: { type: String, required: true },
-  type: { type: String, enum: ['Sightseeing', 'Food', 'Adventure', 'Relaxation', 'Other'], default: 'Other' },
+  type: { 
+    type: String, 
+    enum: ['Sightseeing', 'Food', 'Adventure', 'Relaxation', 'Culture', 'Shopping', 'Transport', 'Other'], 
+    default: 'Other' 
+  },
   cost: { type: Number, default: 0 },
   duration: { type: String, default: '1 hour' },
   dateTime: { type: Date }
@@ -16,7 +20,7 @@ const StopSchema = new mongoose.Schema({
 });
 
 const ExpenseSchema = new mongoose.Schema({
-  category: { type: String, enum: ['Transport', 'Stay', 'Meals', 'Activities', 'Other'], required: true },
+  category: { type: String, enum: ['Transport', 'Stay', 'Meals', 'Activities', 'Shopping', 'Other'], required: true },
   estimatedCost: { type: Number, default: 0 },
   actualCost: { type: Number, default: 0 }
 });
@@ -24,7 +28,7 @@ const ExpenseSchema = new mongoose.Schema({
 const ChecklistItemSchema = new mongoose.Schema({
   itemName: { type: String, required: true },
   category: { type: String, default: 'General' },
-  isPacked: { type: Boolean, default: false }
+  packed: { type: Boolean, default: false }
 });
 
 const NoteSchema = new mongoose.Schema({
@@ -43,14 +47,7 @@ const TripSchema = new mongoose.Schema({
   stops: [StopSchema],
   expenses: [ExpenseSchema],
   checklist: [ChecklistItemSchema],
-  notes: [NoteSchema],
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
-
-TripSchema.pre('save', function(next) {
-  this.updatedAt = Date.now();
-  next();
-});
+  notes: [NoteSchema]
+}, { timestamps: true });
 
 export default mongoose.models.Trip || mongoose.model('Trip', TripSchema);

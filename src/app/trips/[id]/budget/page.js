@@ -3,6 +3,15 @@ import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 import connectMongo from "@/lib/mongodb";
 import Trip from "@/models/Trip";
 
+const CATEGORY_META = {
+  Transport: { color: '#2563EB', bg: '#EFF6FF', emoji: '✈️' },
+  Stay: { color: '#10B981', bg: '#ECFDF5', emoji: '🏨' },
+  Meals: { color: '#F59E0B', bg: '#FFFBEB', emoji: '🍽️' },
+  Activities: { color: '#8B5CF6', bg: '#F5F3FF', emoji: '🎭' },
+  Shopping: { color: '#EC4899', bg: '#FDF2F8', emoji: '🛍️' },
+  Other: { color: '#64748B', bg: '#F1F5F9', emoji: '📦' },
+};
+
 export default async function BudgetPage({ params }) {
   const { id } = await params;
   const session = await getServerSession(authOptions);
@@ -12,51 +21,86 @@ export default async function BudgetPage({ params }) {
   const trip = await Trip.findOne({ _id: id, userId: session.user.id });
   if (!trip) return null;
 
-  // Process budget exactly like the old client component did
   const expenses = trip.expenses || [];
-  let budget = { totalEstimated: 2500, breakdown: { Transport: 800, Stay: 1000, Meals: 400, Activities: 300 } };
-  
+  let breakdown = { Transport: 800, Stay: 1000, Meals: 400, Activities: 300 };
+
   if (expenses.length > 0) {
-    budget.totalEstimated = expenses.reduce((acc, curr) => acc + curr.estimatedCost, 0);
-    budget.breakdown = expenses.reduce((acc, curr) => {
+    breakdown = expenses.reduce((acc, curr) => {
       acc[curr.category] = (acc[curr.category] || 0) + curr.estimatedCost;
       return acc;
     }, {});
   }
 
-  const getBudgetCssWidth = (amount) => {
-    return `${(amount / budget.totalEstimated) * 100}%`;
-  };
+  const total = Object.values(breakdown).reduce((s, v) => s + v, 0);
+  const entries = Object.entries(breakdown).sort((a, b) => b[1] - a[1]);
 
   return (
-    <div className="budget-view animate-slide-up">
-      <h2 className="text-2xl font-bold mb-6">Cost Breakdown</h2>
-      
-      <div className="glass-panel text-center p-8 mb-8" style={{ background: 'linear-gradient(135deg, var(--bg-surface), #EFF6FF)' }}>
-        <p className="text-muted text-lg">Total Estimated Budget</p>
-        <h1 className="text-6xl font-bold text-gradient mt-4">${budget.totalEstimated}</h1>
+    <div className="budget-page animate-slide-up">
+      {/* Hero Total */}
+      <div className="budget-hero">
+        <p className="budget-hero-label">Total Estimated Budget</p>
+        <p className="budget-hero-amount">${total.toLocaleString()}</p>
+        <p style={{ opacity: 0.7, fontSize: '0.875rem', marginTop: '0.5rem' }}>
+          Across {entries.length} spending categories
+        </p>
       </div>
 
-      <div className="glass-panel p-8">
-        <h3 className="font-bold text-xl mb-8">Spending by Category</h3>
-        <div className="budget-bars flex-col gap-8">
-          {Object.entries(budget.breakdown).map(([category, amount]) => (
-            <div key={category} className="budget-bar-wrapper">
-              <div className="flex-between mb-3">
-                <span className="font-medium text-lg">{category}</span>
-                <span className="font-bold text-lg">${amount}</span>
+      {/* Category Breakdown */}
+      <div>
+        <h3 className="text-xl font-bold mb-4">Spending Breakdown</h3>
+        <div className="budget-grid">
+          {entries.map(([category, amount]) => {
+            const meta = CATEGORY_META[category] || CATEGORY_META.Other;
+            const pct = Math.round((amount / total) * 100);
+            return (
+              <div key={category} className="budget-cat-card">
+                <div className="budget-cat-name" style={{ color: meta.color }}>
+                  <span style={{ background: meta.bg, padding: '0.25rem 0.5rem', borderRadius: '6px' }}>
+                    {meta.emoji} {category}
+                  </span>
+                </div>
+                <div className="budget-cat-amount" style={{ color: meta.color }}>${amount}</div>
+                <div className="budget-cat-bar">
+                  <div
+                    className="budget-cat-fill"
+                    style={{ width: `${pct}%`, background: meta.color }}
+                  />
+                </div>
+                <p className="text-xs text-muted mt-2">{pct}% of total budget</p>
               </div>
-              <div className="progress-bar bg-surface-hover" style={{ height: '12px' }}>
-                <div 
-                  className={`progress-fill`} 
-                  style={{ 
-                    width: getBudgetCssWidth(amount),
-                    background: category === 'Stay' ? '#3B82F6' : category === 'Transport' ? '#10B981' : category === 'Meals' ? '#F59E0B' : '#8B5CF6'
-                  }}
-                ></div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Detailed Bar Chart */}
+      <div className="glass-panel">
+        <h3 className="text-xl font-bold mb-6">Spending by Category</h3>
+        <div className="flex-col gap-5">
+          {entries.map(([category, amount]) => {
+            const meta = CATEGORY_META[category] || CATEGORY_META.Other;
+            const pct = Math.round((amount / total) * 100);
+            return (
+              <div key={category}>
+                <div className="flex-between mb-2">
+                  <div className="flex-row gap-2">
+                    <span style={{ fontSize: '1.1rem' }}>{meta.emoji}</span>
+                    <span className="font-semibold text-sm">{category}</span>
+                  </div>
+                  <div className="flex-row gap-3">
+                    <span className="text-sm text-muted">{pct}%</span>
+                    <span className="font-bold">${amount}</span>
+                  </div>
+                </div>
+                <div className="progress-bar" style={{ height: '10px' }}>
+                  <div
+                    className="progress-fill"
+                    style={{ width: `${pct}%`, background: `linear-gradient(90deg, ${meta.color}, ${meta.color}88)` }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
     </div>

@@ -1,133 +1,169 @@
-.trip-view-container {
-  padding: var(--space-xl) 0;
+/* ===== TRIP VIEW ===== */
+.trip-view { min-height: 100vh; background: var(--bg-main); }
+
+/* Banner */
+.trip-banner {
+  height: 320px; position: relative;
+  background-size: cover; background-position: center;
+  display: flex; flex-direction: column; justify-content: flex-end;
 }
 
-.trip-hero {
-  padding: var(--space-2xl) 0;
-  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
-  border-radius: var(--radius-lg);
+.trip-banner-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(10,15,30,0.88) 0%, rgba(10,15,30,0.3) 60%, transparent 100%);
 }
 
-.justify-center {
-  justify-content: center;
+.trip-banner-content {
+  position: relative; z-index: 1;
+  padding: 2rem 3rem; flex: 1; display: flex; flex-direction: column; justify-content: flex-end;
 }
 
-.tab-navigation {
-  background: var(--bg-surface-solid);
-  padding: var(--space-xs);
-  border-radius: var(--radius-full);
-  display: inline-flex;
-  margin: 0 auto;
+.trip-back-btn {
+  display: inline-flex; align-items: center; gap: 0.5rem;
+  color: rgba(255,255,255,0.7); font-size: 0.8rem; font-weight: 600;
+  text-decoration: none; transition: color 0.2s; margin-bottom: 1rem; width: fit-content;
+  background: rgba(255,255,255,0.1); padding: 0.35rem 0.75rem; border-radius: var(--radius-full);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.trip-back-btn:hover { color: white; background: rgba(255,255,255,0.2); }
+
+.trip-banner-title { font-size: 2.5rem; font-weight: 900; color: white; margin-bottom: 0.625rem; }
+.trip-banner-meta {
+  display: flex; align-items: center; gap: 1.5rem;
+  color: rgba(255,255,255,0.75); font-size: 0.875rem;
+}
+.trip-banner-meta span { display: flex; align-items: center; gap: 0.375rem; }
+
+.trip-edit-btn {
+  position: absolute; top: 1.5rem; right: 1.5rem; z-index: 1;
+  display: flex; align-items: center; gap: 0.5rem;
+  background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+  border: 1px solid rgba(255,255,255,0.3); color: white;
+  padding: 0.5rem 1rem; border-radius: var(--radius-full);
+  font-size: 0.8rem; font-weight: 600; text-decoration: none; transition: all 0.2s;
+}
+.trip-edit-btn:hover { background: rgba(255,255,255,0.25); color: white; }
+
+/* Tabs */
+.trip-tabs-wrap {
+  background: white; border-bottom: 1px solid var(--border-color);
+  padding: 0 3rem; position: sticky; top: 64px; z-index: 50;
 }
 
-.tab-btn {
-  background: transparent;
-  color: var(--text-secondary);
-  padding: var(--space-sm) var(--space-xl);
-  border-radius: var(--radius-full);
-  font-weight: 500;
-  display: flex;
-  align-items: center;
-  gap: var(--space-sm);
-  transition: all 0.3s ease;
+.trip-tabs { display: flex; gap: 0.25rem; }
+
+.trip-tab {
+  display: flex; align-items: center; gap: 0.5rem;
+  padding: 1rem 1.25rem; font-size: 0.875rem; font-weight: 500;
+  color: var(--text-secondary); border-bottom: 2px solid transparent;
+  transition: all 0.2s; text-decoration: none;
+}
+.trip-tab:hover { color: var(--primary); background: var(--primary-light); }
+.trip-tab.active-tab { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+/* Content */
+.trip-content {
+  max-width: 1100px; margin: 0 auto; padding: 2.5rem 2rem;
 }
 
-.tab-btn:hover {
-  color: var(--text-primary);
+/* ===== ITINERARY ===== */
+.itinerary-page { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.itin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.5rem; }
+.itin-title { font-size: 1.5rem; font-weight: 800; }
+
+.stop-card {
+  border: 1px solid var(--border-color); border-radius: var(--radius-xl);
+  background: white; overflow: hidden;
+  box-shadow: var(--shadow-xs); transition: box-shadow 0.2s;
+}
+.stop-card:hover { box-shadow: var(--shadow-md); }
+
+.stop-card-header {
+  padding: 1.5rem 1.75rem;
+  background: linear-gradient(135deg, #F8FAFF, white);
+  border-bottom: 1px solid var(--border-color);
+  display: flex; align-items: center; gap: 1rem;
 }
 
-.tab-btn.active {
-  background: var(--bg-surface-hover);
-  color: var(--primary);
-  box-shadow: var(--shadow-sm);
+.stop-number {
+  width: 32px; height: 32px; border-radius: var(--radius-full);
+  background: var(--primary); color: white;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 800; font-size: 0.875rem; flex-shrink: 0;
 }
 
-.max-w-4xl {
-  max-width: 896px;
-  width: 100%;
-}
+.stop-city { font-size: 1.25rem; font-weight: 800; }
+.stop-dates { font-size: 0.8rem; color: var(--text-muted); margin-top: 0.125rem; }
 
-.timeline-view {
-  border-left: 2px solid var(--border-color);
-  padding-left: 2rem;
-  margin-left: 1rem;
-}
+.stop-body { padding: 1.5rem 1.75rem; }
 
-.timeline-stop {
-  position: relative;
-  padding: var(--space-xl);
-}
-
-.stop-badge {
-  position: absolute;
-  left: -3.5rem;
-  top: 2rem;
-  background: var(--primary);
-  color: white;
-  padding: 0.2rem 0.6rem;
-  border-radius: var(--radius-full);
-  font-size: 0.75rem;
-  font-weight: bold;
-}
-
-.activities-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: var(--space-md);
-}
+.activities-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 0.875rem; }
 
 .activity-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
-  padding: var(--space-md);
-  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color); border-radius: var(--radius-md);
+  padding: 1rem; background: var(--bg-main); transition: all 0.2s;
 }
+.activity-card:hover { border-color: var(--primary); background: var(--primary-light); }
 
-.activity-type {
-  background: var(--bg-surface-hover);
-  padding: 0.2rem 0.5rem;
-  border-radius: var(--radius-sm);
-  color: var(--text-muted);
+.activity-name { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem; }
+.activity-meta { display: flex; align-items: center; gap: 1rem; }
+.activity-meta span { display: flex; align-items: center; gap: 0.35rem; font-size: 0.78rem; color: var(--text-muted); }
+
+/* ===== BUDGET ===== */
+.budget-page { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.budget-hero {
+  background: linear-gradient(135deg, var(--primary), #4F46E5);
+  border-radius: var(--radius-xl); padding: 2.5rem;
+  text-align: center; color: white;
 }
+.budget-hero-label { font-size: 0.875rem; opacity: 0.8; margin-bottom: 0.5rem; }
+.budget-hero-amount { font-size: 4rem; font-weight: 900; font-family: var(--font-heading); }
 
-.gap-1 { gap: 0.25rem; }
-.gap-4 { gap: 1rem; }
-.gap-6 { gap: 1.5rem; }
-.ml-4 { margin-left: 1rem; }
+.budget-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
 
-.bg-surface-hover { background-color: var(--bg-surface-hover); }
+.budget-cat-card {
+  border: 1px solid var(--border-color); border-radius: var(--radius-lg);
+  padding: 1.5rem; background: white;
+}
+.budget-cat-name { font-weight: 600; font-size: 0.9rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.5rem; }
+.budget-cat-amount { font-size: 1.75rem; font-weight: 800; margin-bottom: 0.75rem; font-family: var(--font-heading); }
+.budget-cat-bar { height: 6px; background: var(--bg-surface-hover); border-radius: var(--radius-full); overflow: hidden; }
+.budget-cat-fill { height: 100%; border-radius: var(--radius-full); }
 
-.transport-color { background-color: #3B82F6; } /* Blue */
-.stay-color { background-color: #10B981; } /* Emerald */
-.meals-color { background-color: #F59E0B; } /* Amber */
-.activities-color { background-color: #EC4899; } /* Pink */
+/* ===== CHECKLIST ===== */
+.checklist-page { display: flex; flex-direction: column; gap: 1.25rem; }
+
+.checklist-header { display: flex; align-items: center; justify-content: space-between; }
+.checklist-progress-wrap { background: white; border: 1px solid var(--border-color); border-radius: var(--radius-xl); padding: 1.5rem; margin-bottom: 0.5rem; }
+.checklist-progress-label { display: flex; justify-content: space-between; margin-bottom: 0.75rem; font-size: 0.875rem; }
 
 .checklist-item {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-color);
-  transition: all 0.2s ease;
+  display: flex; align-items: center; gap: 1rem;
+  padding: 0.875rem 1.25rem; border-radius: var(--radius-lg);
+  border: 1.5px solid var(--border-color); background: white;
+  cursor: pointer; transition: all 0.2s; user-select: none;
 }
+.checklist-item:hover { border-color: var(--primary); }
+.checklist-item.checked { background: var(--success-light); border-color: rgba(16,185,129,0.3); opacity: 0.7; }
+.checklist-item.checked .ci-name { text-decoration: line-through; color: var(--text-muted); }
 
-.checklist-item:hover {
-  background: rgba(255, 255, 255, 0.05);
+.ci-checkbox {
+  width: 20px; height: 20px; border-radius: 50%;
+  border: 2px solid var(--border-strong); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.2s;
 }
+.ci-checkbox.done { background: var(--success); border-color: var(--success); }
 
-.checklist-item.packed {
-  opacity: 0.6;
-  background: transparent;
-  border-color: transparent;
-}
+.ci-name { font-size: 0.9375rem; font-weight: 500; }
 
-.checklist-checkbox {
-  width: auto;
-  accent-color: var(--primary);
-  transform: scale(1.2);
-}
-
-.line-through {
-  text-decoration: line-through;
-}
-
-.w-full {
-  width: 100%;
+@media (max-width: 768px) {
+  .trip-tabs-wrap { padding: 0 1rem; }
+  .trip-content { padding: 1.5rem 1rem; }
+  .trip-banner { height: 240px; }
+  .trip-banner-title { font-size: 1.75rem; }
+  .trip-banner-content { padding: 1.5rem; }
+  .budget-grid { grid-template-columns: 1fr; }
 }
