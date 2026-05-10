@@ -123,7 +123,38 @@ export default async function Dashboard() {
             </div>
           )}
 
-          {/* All Trips Grid Removed per user request */}
+          {/* Previous Trips */}
+          {tripData.length > 1 && (
+            <div className="dash-section mt-6">
+              <div className="section-header flex-between mb-4">
+                <h2 className="section-title">Previous Trips</h2>
+              </div>
+              <div className="trips-grid">
+                {tripData.slice(1).map(trip => (
+                  <Link key={trip._id} href={`/trips/${trip._id}`} className="trip-card-link">
+                    <div className="trip-mini-card">
+                      <div
+                        className="trip-mini-img"
+                        style={{ backgroundImage: `url(${trip.coverPhoto})` }}
+                      />
+                      <div className="trip-mini-info">
+                        <h4 className="trip-mini-name">{trip.name}</h4>
+                        <p className="trip-mini-date">
+                          <Calendar size={12} />
+                          {trip.startDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} –{' '}
+                          {trip.endDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                        </p>
+                        <div className="trip-mini-footer">
+                          <span className="badge badge-primary">{trip.stops} stops</span>
+                          <ArrowRight size={14} className="text-muted" />
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         {/* ===== RIGHT SIDEBAR ===== */}
