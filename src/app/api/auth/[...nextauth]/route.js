@@ -4,6 +4,11 @@ import bcrypt from "bcryptjs";
 import connectMongo from "@/db-setup/mongodb";
 import User from "@/database-models/User";
 
+// Automatically use Vercel URL if deployed there, bypassing any incorrect NEXTAUTH_URL set in dashboard
+if (process.env.VERCEL_URL) {
+  process.env.NEXTAUTH_URL = `https://${process.env.VERCEL_URL}`;
+}
+
 export const authOptions = {
   providers: [
     CredentialsProvider({
