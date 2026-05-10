@@ -1,5 +1,5 @@
-import Navbar from "@/components/Navbar";
-import AuthProvider from "@/components/AuthProvider";
+import Navbar from "@/components/layout/Navbar";
+import AuthProvider from "@/components/layout/AuthProvider";
 import "./globals.css";
 
 export const metadata = {
