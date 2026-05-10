@@ -1,0 +1,57 @@
+.dashboard-container {
+  padding: var(--space-xl) 0;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: var(--space-2xl);
+}
+
+.trip-card {
+  padding: var(--space-lg);
+  border-left: 4px solid var(--primary);
+}
+
+.btn-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-surface-solid);
+  transition: all 0.2s ease;
+}
+
+.trip-card:hover .btn-icon {
+  background: var(--primary);
+}
+
+.trip-card:hover .btn-icon svg {
+  color: white;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 8px;
+  background: var(--bg-surface-solid);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+}
+
+.bg-accent {
+  background-color: var(--accent);
+}
+
+@media (max-width: 992px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}

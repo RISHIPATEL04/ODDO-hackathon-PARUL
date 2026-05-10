@@ -1,0 +1,443 @@
+/* ============================================================
+   LANDING PAGE – Pixel-perfect recreation of the Airo reference
+   ============================================================ */
+
+/* Break out of parent .container */
+.landing {
+  position: relative;
+  width: 100vw;
+  margin-left: calc(-50vw + 50%);
+  background: #FAFBFC;
+  font-family: 'Inter', sans-serif;
+  overflow-x: hidden;
+}
+
+/* ======================== TOP NAV ======================== */
+.landing-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 3rem;
+  background: #fff;
+  border-bottom: 1px solid #F3F4F6;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.landing-nav-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a56db;
+  text-decoration: none;
+}
+
+.landing-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.landing-nav-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #6B7280;
+  text-decoration: none;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.landing-nav-link:hover,
+.landing-nav-link.active {
+  color: #111827;
+  border-bottom-color: #1a56db;
+}
+
+.landing-nav-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.landing-nav-icon {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  color: #6B7280;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.landing-nav-icon:hover {
+  background: #F3F4F6;
+  color: #111827;
+}
+
+.landing-nav-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #1a56db;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-decoration: none;
+}
+
+/* ======================== HERO BANNER ======================== */
+.landing-hero {
+  margin: 1.5rem 3rem;
+  background: linear-gradient(135deg, #d4e5ff 0%, #e8f0fe 40%, #f0f7ff 100%);
+  border-radius: 24px;
+  padding: 3rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Soft mountain silhouette overlay */
+.landing-hero::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: 
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1440 320'%3E%3Cpath fill='%23c5d9f5' fill-opacity='0.4' d='M0,224L60,208C120,192,240,160,360,165.3C480,171,600,213,720,218.7C840,224,960,192,1080,186.7C1200,181,1320,203,1380,213.3L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z'%3E%3C/path%3E%3C/svg%3E") no-repeat bottom center;
+  background-size: cover;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.landing-hero h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #1E3A8A;
+  position: relative;
+  z-index: 1;
+  margin-bottom: 2rem;
+}
+
+/* Search bar inside hero */
+.landing-search-bar {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 999px;
+  padding: 0.5rem 0.5rem 0.5rem 1.5rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  position: relative;
+  z-index: 1;
+  gap: 1.5rem;
+  max-width: 620px;
+  width: 100%;
+}
+
+.landing-search-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 120px;
+}
+
+.landing-search-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  color: #9CA3AF;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+}
+
+.landing-search-value {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.landing-search-divider {
+  width: 1px;
+  height: 32px;
+  background: #E5E7EB;
+}
+
+.landing-search-btn {
+  background: #1a56db;
+  color: white;
+  border: none;
+  border-radius: 999px;
+  padding: 0.7rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.landing-search-btn:hover {
+  background: #1648b8;
+}
+
+/* ======================== DESTINATIONS ======================== */
+.landing-section {
+  padding: 3rem 3rem;
+}
+
+.landing-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+}
+
+.landing-section-header h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.3rem;
+}
+
+.landing-section-header p {
+  font-size: 0.95rem;
+  color: #6B7280;
+}
+
+.landing-view-all {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #1a56db;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.landing-view-all:hover {
+  text-decoration: underline;
+}
+
+/* Destination cards grid */
+.landing-dest-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+.landing-dest-card {
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  height: 340px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.landing-dest-card:hover {
+  transform: translateY(-4px);
+}
+
+.landing-dest-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.landing-dest-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.05) 50%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1.5rem;
+}
+
+.landing-dest-badge {
+  display: inline-block;
+  width: fit-content;
+  padding: 0.2rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: capitalize;
+  margin-bottom: 0.5rem;
+}
+
+.landing-dest-badge.heritage {
+  background: rgba(59, 130, 246, 0.3);
+  color: #93C5FD;
+}
+
+.landing-dest-badge.coastal {
+  background: rgba(16, 185, 129, 0.3);
+  color: #6EE7B7;
+}
+
+.landing-dest-badge.alpine {
+  background: rgba(139, 92, 246, 0.3);
+  color: #C4B5FD;
+}
+
+.landing-dest-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 0.3rem;
+}
+
+.landing-dest-desc {
+  font-size: 0.82rem;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.4;
+  margin-bottom: 0.75rem;
+}
+
+.landing-dest-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: white;
+}
+
+.landing-dest-price span {
+  font-size: 0.8rem;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ======================== WHY CHOOSE ======================== */
+.landing-why {
+  padding: 4rem 3rem;
+  text-align: center;
+}
+
+.landing-why h2 {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.landing-why > p {
+  font-size: 0.93rem;
+  color: #6B7280;
+  max-width: 420px;
+  margin: 0 auto 3rem;
+  line-height: 1.6;
+}
+
+.landing-why-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.landing-why-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+}
+
+.landing-why-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.landing-why-icon.blue    { background: #DBEAFE; color: #1a56db; }
+.landing-why-icon.green   { background: #D1FAE5; color: #059669; }
+.landing-why-icon.sky     { background: #E0F2FE; color: #0284C7; }
+
+.landing-why-card h3 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 0.5rem;
+}
+
+.landing-why-card p {
+  font-size: 0.83rem;
+  color: #6B7280;
+  line-height: 1.5;
+  max-width: 240px;
+}
+
+/* ======================== FOOTER ======================== */
+.landing-footer {
+  border-top: 1px solid #E5E7EB;
+  padding: 2rem 3rem;
+}
+
+.landing-footer-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.landing-footer-brand {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1a56db;
+}
+
+.landing-footer-links {
+  display: flex;
+  gap: 2rem;
+}
+
+.landing-footer-links a {
+  font-size: 0.85rem;
+  color: #6B7280;
+  text-decoration: none;
+}
+
+.landing-footer-links a:hover {
+  color: #111827;
+}
+
+.landing-footer-copy {
+  text-align: center;
+  font-size: 0.8rem;
+  color: #9CA3AF;
+}
+
+/* ======================== RESPONSIVE ======================== */
+@media (max-width: 900px) {
+  .landing-nav { padding: 1rem 1.5rem; }
+  .landing-hero { margin: 1rem 1.5rem; padding: 2rem 1rem; }
+  .landing-hero h2 { font-size: 1.8rem; }
+  .landing-search-bar { flex-direction: column; border-radius: 16px; padding: 1rem; gap: 1rem; }
+  .landing-search-divider { width: 100%; height: 1px; }
+  .landing-dest-grid { grid-template-columns: 1fr; }
+  .landing-why-grid { grid-template-columns: 1fr; }
+  .landing-section { padding: 2rem 1.5rem; }
+  .landing-why { padding: 2rem 1.5rem; }
+  .landing-footer { padding: 1.5rem; }
+  .landing-footer-top { flex-direction: column; gap: 1rem; }
+}

@@ -1,0 +1,42 @@
+.new-trip-container {
+  padding: var(--space-xl) 0;
+}
+
+.max-w-3xl {
+  max-width: 768px;
+  width: 100%;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.block {
+  display: block;
+}
+
+.cover-upload {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface-solid);
+  transition: all 0.2s ease;
+}
+
+.cover-upload:hover {
+  border-color: var(--primary);
+  background: var(--bg-surface-hover);
+}
+
+.hidden-input {
+  display: none;
+}

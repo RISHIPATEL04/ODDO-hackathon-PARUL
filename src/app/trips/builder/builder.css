@@ -1,0 +1,155 @@
+.builder-container {
+  padding: var(--space-xl) 0;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.timeline-container {
+  position: relative;
+  padding-left: 2rem;
+}
+
+.timeline-container::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 2rem;
+  bottom: 4rem;
+  width: 2px;
+  background: var(--border-color);
+}
+
+.stop-card {
+  position: relative;
+  padding: var(--space-xl);
+}
+
+.stop-card::before {
+  content: '';
+  position: absolute;
+  left: -2.3rem;
+  top: 2rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: var(--bg-main);
+  border: 2px solid var(--primary);
+  z-index: 1;
+}
+
+.stop-number {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+.city-input {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+  color: var(--text-primary);
+}
+
+.city-input:focus {
+  box-shadow: none;
+  border-bottom: 2px solid var(--primary);
+  border-radius: 0;
+}
+
+.date-input {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-color);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+}
+
+.drag-handle {
+  cursor: grab;
+}
+
+.btn-icon-danger {
+  color: #EF4444;
+  background: rgba(239, 68, 68, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-icon-danger:hover {
+  background: rgba(239, 68, 68, 0.2);
+}
+
+.activity-item {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--border-color);
+}
+
+.activity-input {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.activity-input:focus {
+  box-shadow: none;
+  border-bottom: 1px solid var(--primary);
+  border-radius: 0;
+}
+
+.meta-input-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-sm);
+  padding: 0 var(--space-sm);
+}
+
+.meta-input {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  width: 60px;
+  padding: var(--space-sm);
+}
+
+.meta-input:focus {
+  box-shadow: none;
+}
+
+.flex-grow {
+  flex-grow: 1;
+}
+
+.hover-danger:hover {
+  color: #EF4444;
+}
+
+.add-stop-btn {
+  background: transparent;
+  border: 2px dashed var(--border-color);
+  color: var(--text-secondary);
+  padding: var(--space-md) var(--space-xl);
+}
+
+.add-stop-btn:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.w-fit {
+  width: fit-content;
+}
