@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession, signOut } from 'next-auth/react';
-import { Compass, LayoutDashboard, Map, Binoculars, User, LogOut, Bell, Plus } from 'lucide-react';
+import { Compass, LayoutDashboard, Map, Binoculars, Users, LogOut, Bell, Plus } from 'lucide-react';
 import './Navbar.css';
 
 export default function Navbar() {
@@ -18,6 +18,7 @@ export default function Navbar() {
     { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { href: '/trips', label: 'My Trips', icon: Map },
     { href: '/explore', label: 'Explore', icon: Binoculars },
+    { href: '/community', label: 'Community', icon: Users },
   ];
 
   return (
