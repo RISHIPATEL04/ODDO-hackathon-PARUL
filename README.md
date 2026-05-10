@@ -1,4 +1,5 @@
 # ✈️ Traveloop
+deployed web link (prefered to open in computer/laptop) : https://oddo-hackathon-parul-s9aa.vercel.app/
 
 Traveloop is a personalized, intelligent, and collaborative platform that transforms the way individuals plan and experience travel. Built for the modern traveler, it combines seamless itinerary management with real-time budget tracking.
 
