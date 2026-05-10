@@ -290,20 +290,46 @@
     flex-direction: column;
   }
   .login-left {
-    min-height: 45vh;
+    min-height: 40vh;
+    max-height: 40vh;
     padding: 2rem;
   }
   .login-porthole {
-    width: 260px;
-    height: 260px;
+    width: 220px;
+    height: 220px;
   }
   .login-left-text {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
   }
   .login-left-text h1 {
-    font-size: 2.2rem;
+    font-size: 1.8rem;
+  }
+  .login-left-text p {
+    display: none;
   }
   .login-right {
+    flex: 1;
     padding: 2rem 1.5rem;
+    overflow-y: auto;
+  }
+}
+
+/* Mobile: completely hide left decorative panel, show only the form */
+@media (max-width: 600px) {
+  .login-left {
+    display: none;
+  }
+  .login-wrapper {
+    flex-direction: column;
+  }
+  .login-right {
+    width: 100%;
+    padding: 2rem 1.25rem;
+    min-height: 100vh;
+    align-items: flex-start;
+    padding-top: 3rem;
+  }
+  .login-form-box {
+    max-width: 100%;
   }
 }
